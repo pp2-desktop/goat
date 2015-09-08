@@ -23,13 +23,16 @@ int main(int argc, char** argv) {
       exit(1);
     }
 
-  if(argc<2) {
-    std::cout << "[error] argv가 없습니다" << std::endl;
+  if(argc<3) {
+    std::cout << "[error] argv가 없거나 적음" << std::endl;
+    std::cout << "[help] 주소 자리번호" << std::endl;
     return 1;
   }
 
   // tmp
-  int slot_seat_num = std::stoi(std::string(argv[1]).c_str());
+  std::string _ip(argv[1]);
+
+  int slot_seat_num = std::stoi(std::string(argv[2]).c_str());
   app::get().mid = slot_seat_num;
   std::cout << "[debug] 유저 슬롯자리: " << app::get().mid << std::endl;
   
@@ -48,7 +51,7 @@ int main(int argc, char** argv) {
   boost::asio::io_service io_service;
   tcp::resolver resolver(io_service);
 
-  auto endpoint_iterator = resolver.resolve({ "192.168.0.149", "10102" });
+  auto endpoint_iterator = resolver.resolve({ _ip.c_str(), "10102" });
  
   auto is_connect = false;
 

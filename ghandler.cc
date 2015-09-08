@@ -2,6 +2,8 @@
 #include <iostream>
 #include <glog/logging.h>
 #include <string>
+#include <chrono>
+#include <thread>
 #include "app.hpp"
 
 ghandler::ghandler() {
@@ -48,6 +50,9 @@ std::vector<std::string> ghandler::handle_packet(std::string type, std::vector<s
 
   } else if (type == "spin_ans" ) {
     
+
+    //std::this_thread::sleep_for(std::chrono::seconds(100000));
+
     std::cout << "[debug] 스핀 돌린 결과 받음 " << app::get().spin_cnt << std::endl;
 
     if (app::get().spin_cnt < app::get().max_spin_cnt) {
