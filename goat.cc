@@ -46,12 +46,11 @@ int main(int argc, char** argv) {
   int num_cookies = 10;
   LOG(INFO) << "Found " << num_cookies << " cookies";
 
-  fLS::FLAGS_log_dir = "c:/Documents/logs";
   
   boost::asio::io_service io_service;
   tcp::resolver resolver(io_service);
 
-  auto endpoint_iterator = resolver.resolve({ _ip.c_str(), "10102" });
+  auto endpoint_iterator = resolver.resolve({ _ip.c_str(), "10304" });
  
   auto is_connect = false;
 
