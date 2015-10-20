@@ -80,9 +80,16 @@ int main(int argc, char** argv) {
   while(1) {
     packet msg; //gi skey
     msg.add_chunk("join_slot_server_req");
-    msg.add_chunk("kyunghun");
+    msg.add_chunk("tester2");
     msg.add_chunk("1234");
     c.write(msg);
+
+    packet msg2;
+    msg2.add_chunk("get_my_info_req");
+    c.write(msg2);
+
+
+
     std::cout << "패킷 보냄" << std::endl;
     getchar();
   }
