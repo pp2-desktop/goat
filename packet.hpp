@@ -1,9 +1,13 @@
+#ifndef __PACKET_HPP__
+#define __PACKET_HPP__
+
+#include <mutex>
 #include <iostream>
 #include <string>
 #include <cstring>
 #include <boost/lexical_cast.hpp>
 
-#define BUF_SIZE 1024
+#define BUF_SIZE 1024*5
 
 class packet {
 
@@ -19,7 +23,7 @@ class packet {
   int packet_total_length_;
 
   size_t body_length_;
-
+public:
   char buffer_[BUF_SIZE];
 
   void update_header_length(size_t);
@@ -28,12 +32,19 @@ class packet {
   std::string buffer2string(char*, int);
 
   std::vector<std::string> chunk_container_;
-public:
+  //public:
 
   enum { header_length = sizeof(size_t), chunk_cnt_length = sizeof(size_t) };
 
   packet();
+  //packet(const packet& packet);
   ~packet();
+
+  packet& operator=(const packet& p) {
+    this->packet_total_length_ = p.packet_total_length_;
+    std::memcpy(this->buffer_, p.buffer_, BUF_SIZE);
+    return *this;
+  }
 
   
   char* get_buf() { return buffer_; }
@@ -45,7 +56,8 @@ public:
 
   std::string get_payload_type();
   std::vector<std::string> get_payload();
-
+  void print_qsize(int size);
+  //std::mutex g_pages_mutex;
 
   /*
     청크가 생길때마다 헤더길이 수정, 청크갯수, 청크마다 길이, 1바이트의 토큰
@@ -61,3 +73,6 @@ public:
   void reset();
 
 };
+
+
+#endif

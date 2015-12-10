@@ -1,0 +1,27 @@
+{
+  "host" : "192.168.0.140",
+  "port" : "10303",
+
+  "sharedmemoryname" : "MySharedMemory",
+
+
+ "playing_pattern" :  [
+    { "uid": "tester4", "mid" : 110, "spin_cnt": 500000 },
+    { "uid": "tester4", "mid" : 110, "spin_cnt": 500000 },
+    { "uid": "tester4", "mid" : 302, "spin_cnt": 500000 },
+    { "uid": "tester2", "mid" : 303, "spin_cnt": 500000 },
+    { "uid": "tester2", "mid" : 304, "spin_cnt": 500000 },
+    { "uid": "tester2", "mid" : 305, "spin_cnt": 500000 },
+    { "uid": "tester2", "mid" : 306, "spin_cnt": 500000 },
+    { "uid": "tester2", "mid" : 307, "spin_cnt": 500000 },
+    { "uid": "tester2", "mid" : 308, "spin_cnt": 500000 },
+    { "uid": "tester2", "mid" : 309, "spin_cnt": 500000 },
+    { "uid": "tester2", "mid" : 310, "spin_cnt": 500000 }
+  ],
+  
+  "Property" :  [
+    { "symbolName" : "SCustomStruct#3" },
+    { "symbolName" : "SCustomStruct#2" },
+    { "symbolName" : "SCustomStruct#1" }
+  ]
+}

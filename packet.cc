@@ -1,11 +1,10 @@
 #include "packet.hpp"
-
+#include <utility>
 packet::packet() 
   : header_length_(sizeof(std::size_t)*2),
     max_payload_length_(1024*sizeof(char)-sizeof(std::size_t)),
     token_length_(sizeof(char)),
-    chunk_cnt_pos_(sizeof(std::size_t))
-{
+    chunk_cnt_pos_(sizeof(std::size_t)) {
   chunk_cnt_ = 0;
   body_length_ = 0;
   std::memset(buffer_, 0, BUF_SIZE);
@@ -16,6 +15,24 @@ packet::packet()
   payload_pos_   = sizeof(std::size_t) * 2;
   packet_total_length_ = sizeof(size_t) * 2;
 }
+
+/*
+packet::packet(const packet& packet) 
+  : header_length_(sizeof(std::size_t)*2),
+    max_payload_length_(1024*sizeof(char)-sizeof(std::size_t)),
+    token_length_(sizeof(char)),
+    chunk_cnt_pos_(sizeof(std::size_t))
+{
+  this->chunk_cnt_ = packet.chunk_cnt_;
+  this->body_length_ = packet.body_length_;
+  std::memset(buffer_, 0, BUF_SIZE);
+  std::memset(buffer_, 0, BUF_SIZE);
+
+  this->payload_pos_ = packet.payload_pos_;
+  this->packet_total_length_ = packet.packet_total_length_;
+  this->chunk_container_ = packet.chunk_container_;
+}
+*/
 
 packet::~packet() {
 
@@ -67,10 +84,18 @@ bool packet::decode_header() {
   return true;
 }
 
+std::mutex m;
+void packet::print_qsize(int size) {
+  m.lock();
+  std::cout << "size: " << size << std::endl;
+  m.unlock();
+}
+
 std::string packet::buffer2string(char* buf, int len)
 {
     std::string ret(buf, len);
     return ret;
+    //return std::move(ret);
 }
 
 bool packet::decode_body() {
@@ -81,9 +106,13 @@ bool packet::decode_body() {
     return false;
   }
 
-  //std::cout << "[debug] 청크 갯수: " << chunk_cnt << std::endl;
+  //printf("%p\n", &chunk_container_);
+  std::cout << "chunk cnt " << chunk_cnt << std::endl;
+  std::cout << "start vec size: " << chunk_container_.size() << std::endl;
+
 
   int pos = chunk_cnt_length;
+
 
   for(unsigned i=0; i<chunk_cnt; i++) {
 
@@ -95,7 +124,6 @@ bool packet::decode_body() {
 
     chunk_len = chunk_len  - sizeof(char);
 
-    //std::cout << "청크 길이:" << chunk_len << std::endl;
 
     pos = pos + sizeof(chunk_len);
 
@@ -103,20 +131,18 @@ bool packet::decode_body() {
 
     std::memcpy(buf, get_buf_body()+pos, chunk_len);
 
-    std::string payload = buffer2string(buf, chunk_len);
+    std::string payload(buf, chunk_len);
+    //std::string payload = buffer2string(buf, chunk_len);
 
-    //std::cout << "payload: " << payload << std::endl;
 
     chunk_container_.push_back(payload);
-
     pos = pos +  chunk_len + sizeof(char);
   }
 
-  /*
-  for(unsigned i=0; i<chunk_container_.size(); i++) {
-    std::cout << chunk_container_[i] << std::endl;
-  }
-  */
+  //std::cout << "end vec size: " << chunk_container_.size() << std::endl;
+
+
+
 
   return true;
 }
@@ -126,6 +152,7 @@ std::string packet::get_payload_type() {
 }
 
 std::vector<std::string> packet::get_payload() {
+
   std::vector<std::string> payload_container;
   if(chunk_container_.size() > 1) {
     for(unsigned i=1; i<chunk_container_.size(); i++) {
@@ -138,6 +165,8 @@ std::vector<std::string> packet::get_payload() {
 
 
 void packet::reset() {
+  std::cout << "before clean v size: " << chunk_container_.size() << std::endl;
   chunk_container_.clear();
+  std::cout << "after clean v size: " << chunk_container_.size() << std::endl;
 }
 

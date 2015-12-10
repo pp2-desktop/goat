@@ -1,3 +1,6 @@
+#ifndef __GHANDLER_HPP__
+#define __GHANDLER_HPP__
+
 #include <string>
 #include <vector>
 
@@ -11,3 +14,5 @@ public:
   std::vector<std::string> handle_packet(std::string, std::vector<std::string>);
   
 };
+
+#endif

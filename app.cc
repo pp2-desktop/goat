@@ -8,6 +8,7 @@ app::app() {
   max_spin_cnt = std::numeric_limits<size_t>::max();
   spin_cnt = 0;
   is_done = false;
+  is_next = true;
 }
 
 app::~app() {

@@ -1,3 +1,6 @@
+#ifndef __GCONNECTOR_HPP__
+#define __GCONNECTOR_HPP__
+
 #include <cstdlib>
 #include <deque>
 #include <iostream>
@@ -6,6 +9,7 @@
 #include "packet.hpp"
 #include <functional>
 #include "ghandler.hpp"
+#include <deque>
 
 using boost::asio::ip::tcp;
 
@@ -30,8 +34,15 @@ class gconnector {
   ~gconnector();
 
 
-  void write(packet& pkt);
+  void write(packet pkt);
   void close();
 
+  void do_write();
+  void do_write2(const packet& msg);
+
   tcp::socket& get_socket() { return socket_; }
+
+  std::deque<packet> write_msgs_;
 };
+
+#endif

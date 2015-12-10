@@ -35,37 +35,49 @@ std::vector<std::string> ghandler::handle_packet(std::string type, std::vector<s
     std::string rtn = payload[0];
     if (rtn == "ok") {
       LOG(INFO) << "[debug] 슬롯머신 앉기 성공";
-      actions.push_back("set_line_bet_req");
-      actions.push_back("200");
-      //actions.push_back(std::to_string(app::get().mid));
+      actions.push_back("get_my_info_req");
+
     } else {
       LOG(INFO) << "[error] join_machine_ans fail";
     }
 
 
+
+
+  } else if ( type == "get_my_info_ans") {
+    std::string rtn = payload[0];
+    if (rtn == "ok") {
+      LOG(INFO) << "[debug] 나의 정보 가져오기 성공";
+    } else {
+      LOG(INFO) << "[error] 나의 정보 가져오기 실패";
+    }
+
+    actions.push_back("set_line_bet_req");
+    actions.push_back("200");
+    actions.push_back(std::to_string(app::get().mid));
+
   } else if (type =="set_line_bet_ans") {
+    std::string rtn = payload[0];
+    if (rtn == "ok") {
+      LOG(INFO) << "[debug] 라인벳 설정 성공";
+    } else {
+      LOG(INFO) << "[error] 라인벳 설정 실패";
+    }
 
     actions.push_back("spin_req");
-    actions.push_back("100");
+    actions.push_back("200");
 
   } else if (type == "spin_ans" ) {
-    
-
-    //std::this_thread::sleep_for(std::chrono::seconds(100000));
-
-    std::cout << "[debug] 스핀 돌린 결과 받음 " << app::get().spin_cnt << std::endl;
 
     if (app::get().spin_cnt < app::get().max_spin_cnt) {
+      std::cout << "[debug] 스핀 돌린 결과 받음" << app::get().spin_cnt << std::endl;
       actions.push_back("spin_req");
-
-      if(app::get().spin_cnt > 5) {
-	actions.push_back("2500");
-      } else {
-	actions.push_back("5000");
-      }
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
     } else {
+      std::cout << "[error] 스핀 돌린 결과 실패" <<  std::endl;
       actions.push_back("leave_machine_req");
+
     }
     app::get().spin_cnt++;
 
@@ -78,12 +90,13 @@ std::vector<std::string> ghandler::handle_packet(std::string type, std::vector<s
 
     std::cout << "[debug] 슬롯서버 나감" << std::endl;
     app::get().is_done = true;
+    app::get().is_next = true;
+    app::get().wait4next.notify_one();
 
   } else {
     std::cout << "[error] 핸들링 프로토콜 존재하지 않음" << std::endl;
   }
 
  
-  
   return actions;
 }
